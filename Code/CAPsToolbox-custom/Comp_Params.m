@@ -70,10 +70,6 @@ for i=1:length(Data)
         SpatCorr1(i,count) = corr(CorrMap',ActiMap1'); %%% needs transpose for this kind of arrays
         count = count+1;
     end
-    
-     
-      
-
 end
 
 Params.Ind1 = IndStruct;
