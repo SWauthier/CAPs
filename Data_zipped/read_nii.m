@@ -20,9 +20,8 @@ function [Data, brind, V] = read_nii(workpath, number, varargin)
 
 workdir = workpath;
 
-fprintf(['Parsing \n']);
+fprintf('Parsing \n');
 
-defaultNum = 0;
 defaultPopulation = 'Patients';
 expectedPopulation = {'Patients','Controls'};
 
