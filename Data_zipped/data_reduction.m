@@ -31,7 +31,7 @@ for i = 1:len
     save(['Frames' filesep 'Frames_' num2str(i) '.mat'],'Frames');
 end
 
-m = matfile('TotFrames.mat','Writable',true);
+m = matfile(['TotFrames_' population '.mat'],'Writable',true);
 m.TotFrames = [];
 x = 1;
 for i = 1:len
@@ -43,3 +43,5 @@ for i = 1:len
     x = xend + 1;
     
 end
+
+% clearvars -except brind V TH workdir m

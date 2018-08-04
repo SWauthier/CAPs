@@ -34,19 +34,17 @@ end
 
 brain_mask = {};
 
-fprintf(['Start read-in \n']);
+fprintf('Start read-in \n');
 
 for i = 1:len
+    brainmask = [workdir filesep per filesep files(i).name filesep 'rbrainmask.nii']; %path to the brain mask
+    vmask = spm_vol(brainmask);
+    brain_mask{i} = spm_read_vols(vmask);
 
-brainmask = [workdir filesep per filesep files(i).name filesep 'rbrainmask.nii']; %path to the brain mask
-vmask = spm_vol(brainmask);
-brain_mask{i} = spm_read_vols(vmask);
-
-fprintf([num2str(i) '/' num2str(len) '\n']);
-
+    fprintf([num2str(i) '/' num2str(len) '\n']);
 end
 
-fprintf(['Generating mask \n']);
+fprintf('Generating mask \n');
 summask = brain_mask{1};
 for k=2:length(brain_mask)
     summask = summask + brain_mask{k};
