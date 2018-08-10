@@ -34,7 +34,7 @@ function R = Comp_fastCorr(X, Y)
 % For a copy of the GNU General Public License, see <http://www.gnu.org/licenses/>.
 %__________________________________________________________________________
 
-[numSamp1 ~] = size(X); % n*p1,n is the number of samples and p1 is the number
+[numSamp1, ~] = size(X); % n*p1,n is the number of samples and p1 is the number
 X = (X - repmat(mean(X), numSamp1, 1))./repmat(std(X, 0, 1), numSamp1, 1);
 Y = (Y - repmat(mean(Y), numSamp1, 1))./repmat(std(Y, 0, 1), numSamp1, 1);
 R = X' * Y / (numSamp1 - 1);

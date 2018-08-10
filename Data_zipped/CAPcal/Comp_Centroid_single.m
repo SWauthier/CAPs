@@ -1,4 +1,4 @@
-function New_Centroid = Comp_Centroid(Data,Params,brind,V,TH,flag)  
+function New_Centroid = Comp_Centroid_single(Frames,brind,V,flag)  
 
 % This function creates CAP centroid from an independent dataset
 %  
@@ -14,7 +14,7 @@ function New_Centroid = Comp_Centroid(Data,Params,brind,V,TH,flag)
 % V - spm vector of structures containing image volume information. Needed 
 % as reference for the voxel to world transformation (see spm_vol for info)
 % TH - the threshold for the time frames collection (e.g. in the paper, 1SD
-% is ~= 15%, so in that case TH=15). It can be a single number or an array. 
+% is ~= 15%, so in that case TH=15). It can be a single number. 
 % flag - if 1, it will mask the time frames as in (Liu et al., PNAS 2013)
 %
 % Output: 
@@ -46,48 +46,32 @@ function New_Centroid = Comp_Centroid(Data,Params,brind,V,TH,flag)
 %__________________________________________________________________________
 
 Dim = V.dim;
-Perc = Params.Rate1;
-Index = Params.Ind1;
-
-for pp = 1:length(TH) 
-    thr = TH(pp); 
-    NCap = 8; 
-    Frames = [];
-    Step=1;
-    for i=1:length(Data) 
-        fprintf('\n Collecting frames threshold %d percent \n',thr);
-        fprintf('.');
-        New_data = Data{i}; 
-        index = find(Perc(Step,:)>=(100-thr)); 
-        IndFrames = Index{Step,index(end)};
-        Frames = [Frames; New_data(IndFrames,:)];             
-        Step=Step+1;
-    end
-    %%%% Masking on the frames (Liu et al., PNAS 2013)
-    if(flag==1)
-        Frames =  Comp_LiuMask(Frames,Dim);
-    end
-    NTOT_Frames = size(Frames,1);
-    fprintf('\n %d Frames collected \n',NTOT_Frames);
-    ActiMap1 = zeros(1,size(New_data,2)); % or ActiMap1 = Inf(1,size(New_data,2));
-    tmp = mean(Frames,1); 
-    ActiMap1(brind) = tmp(brind);
-    %%%% Kmeans clustering
-    fprintf('\n Kmeans... \n');
-    [~, C] = kmeans(Frames,NCap,'distance','correlation');
-    Centroid{pp}=C;
-    fprintf('\n Computing CAP \n');
-    for j = 1:NCap
-        SpatCorr(j) = corr(ActiMap1(brind)',Centroid{pp}(j,brind)');
-    end
-    %%%% Similarity
-    Sim = SpatCorr./sum(SpatCorr);
-    [~,IX] = sort(Sim,'descend');
-    %%% Sort the centroids
-    New_Centroid{pp}= Centroid{pp}(IX,:);
-             
+NCap = 8;    
+    
+%%%% Masking on the frames (Liu et al., PNAS 2013)
+if(flag==1)
+	Frames = Comp_LiuMask(Frames,Dim);
 end
-            
-             
-     
-return;
+NTOT_Frames = size(Frames,1);
+fprintf('\n %d Frames collected \n',NTOT_Frames);
+ActiMap1 = zeros(1,size(Frames,2)); % or ActiMap1 = Inf(1,size(New_data,2));
+tmp = mean(Frames,1); 
+ActiMap1(brind) = tmp(brind);
+    
+%%%% Kmeans clustering
+fprintf('\n Kmeans... \n');
+[~, C] = kmeans(Frames,NCap,'distance','correlation');
+Centroid=C;
+fprintf('\n Computing CAP \n');
+for j = 1:NCap
+	SpatCorr(j) = corr(ActiMap1(brind)',Centroid(j,brind)');
+end
+    
+%%%% Similarity
+Sim = SpatCorr./sum(SpatCorr);
+[~,IX] = sort(Sim,'descend');
+    
+%%% Sort the centroids
+New_Centroid = Centroid(IX,:);
+       
+return

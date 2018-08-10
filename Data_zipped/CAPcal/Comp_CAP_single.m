@@ -1,4 +1,4 @@
-function [Cap_par S_CAP] = Comp_CAP(Data,Params,brind,V,State,TH,Centroid,Dir)   
+function [Cap_par, S_CAP] = Comp_CAP_single(Frames,brind,V,TH,State,Centroid,Dir)   
 
 % This function creates CAPs, after clustering with centroid fixed. It also
 % writes CAPs and Mean Activation Maps into images and saves Cap_par as a 
@@ -16,7 +16,7 @@ function [Cap_par S_CAP] = Comp_CAP(Data,Params,brind,V,State,TH,Centroid,Dir)
 % V - spm vector of structures containing image volume information. Needed 
 % as reference for the voxel to world transformation (see spm_vol for info)
 % TH - the threshold for the time frames collection (e.g. in the paper, 1SD
-% is ~= 15%, so in that case TH=15). It can be a single number or an array. 
+% is ~= 15%, so in that case TH=15). It can be a single number. 
 % Centroid - The Centroid.mat file created with the Comp_Centroid function
 % State - String array for labeling the files to save (i.e. State='Wake')
 % Dir - String array for the Directory where the files will be saved 
@@ -55,75 +55,63 @@ function [Cap_par S_CAP] = Comp_CAP(Data,Params,brind,V,State,TH,Centroid,Dir)
 %__________________________________________________________________________
 
 Dim = V.dim;
-Perc = Params.Rate1;
-Index = Params.Ind1;
-for pp = 1:length(TH) 
-    thr = TH(pp); 
-    Cap_par = {};
-    Frames = [];
-    for i=1:length(Data) 
-        fprintf('\n Collecting frames, threshold %d percent Folder %s \n',thr,State);
-        fprintf('.');
-        New_data = Data{i}; 
-        New_data(isnan(New_data))=0;
-        index = find(Perc(i,:)>=(100-thr)); 
-        IndFrames = Index{i,index(end)};
-        Frames = [Frames; New_data(IndFrames,:)];             
+thr = TH;
 
-    end
-    %%%% Liu Masking on the frames
-    Frames =  Comp_LiuMask(Frames,Dim);
-    %%%%%
+Cap_par = {};
+sizeF = size(Frames,2);
+    
+%%%% Liu Masking on the frames
+Frames = Comp_LiuMask(Frames,Dim);
+%%%%%
             
-    NTOT_Frames = size(Frames,1);
-    fprintf('\n %d Frames collected \n',NTOT_Frames);
-    ActiMap1 = zeros(1,size(New_data,2));% or ActiMap1 = Inf(1,size(New_data,2));
-    tmp = mean(Frames,1); %%% overall mean
-    ActiMap1(brind) = tmp(brind);
-    fprintf('\n Kmeans... \n');
-    C = Centroid{pp};
-    Liu_NCap = size(C,1);
-    fprintf('\n Number of CAP %d \n',Liu_NCap);
-    D = zeros(size(C,1),size(Frames,1));
-    for cen = 1:size(C,1)
-        for f = 1:size(Frames,1)  
-            X = [C(cen,brind); Frames(f,brind)];  
-            D(cen,f) = pdist(X,'correlation');
-        end
-    end
-    [~, I] = min(D);
-    CAP_Ind = I';
-    fprintf('\n Computing CAP \n');
-    for j = 1:Liu_NCap
-        NCAP_Frames(j)=size(Frames(CAP_Ind==j,:),1);
-        CAP{j} = zeros(1,size(New_data,2));% or CAP{j} = Inf(1,size(New_data,2));
-        cap_tmp = mean(Frames(CAP_Ind==j,:),1);          
-        CAP{j}(brind) = cap_tmp(brind);
-        
-        %%% Similarity
-        SpatCorr(j) = corr(ActiMap1(brind)',CAP{j}(brind)');
-
-        %%% Occurence
-        CAP_Occ(j) = NCAP_Frames(j)./NTOT_Frames;
-    end
-    %%%% Similarity
-    Sim = SpatCorr./sum(SpatCorr);
-    for k = 1:Liu_NCap
-        V.fname = [Dir '\CAP_' num2str(k) '_' State '_' num2str(thr) 'Percent.nii'];
-        V.dt=[16,0];
-        S_CAP{k} = reshape( CAP{k},V.dim);
-        Image = spm_write_vol(V,S_CAP{k});     
-    end
-    V.fname = [Dir '\MeanAct_' State '_' num2str(thr) 'Percent.nii'];
-    V.dt=[16,0];
-    ActiMap1 = reshape( ActiMap1,V.dim);
-    Image = spm_write_vol(V, ActiMap1);
-    Cap_par.Similarity = Sim ;
-    Cap_par.occurence = CAP_Occ;
-    Cap_par.ClusterInd = CAP_Ind;
-    save([Dir '\Cap_par_' State '_' num2str(thr) '.mat'],'Cap_par');
-    save([Dir '\CAP_' State '_' num2str(thr) '.mat'],'S_CAP');
+NTOT_Frames = size(Frames,1);
+fprintf('\n %d Frames collected \n',NTOT_Frames);
+ActiMap1 = zeros(1,sizeF);% or ActiMap1 = Inf(1,size(New_data,2));
+tmp = mean(Frames,1); %%% overall mean
+ActiMap1(brind) = tmp(brind);
+fprintf('\n Kmeans... \n');
+C = Centroid;
+Liu_NCap = size(C,1);
+fprintf('\n Number of CAP %d \n',Liu_NCap);
+D = zeros(size(C,1),size(Frames,1));
+for cen = 1:size(C,1)
+	for f = 1:size(Frames,1)  
+        X = [C(cen,brind); Frames(f,brind)];  
+        D(cen,f) = pdist(X,'correlation');
+	end
 end
+[~, I] = min(D);
+CAP_Ind = I';
+fprintf('\n Computing CAP \n');
+for j = 1:Liu_NCap
+	NCAP_Frames(j)=size(Frames(CAP_Ind==j,:),1);
+	CAP{j} = zeros(1,sizeF);% or CAP{j} = Inf(1,size(New_data,2));
+	cap_tmp = mean(Frames(CAP_Ind==j,:),1);          
+	CAP{j}(brind) = cap_tmp(brind);
+        
+	%%% Similarity
+	SpatCorr(j) = corr(ActiMap1(brind)',CAP{j}(brind)');
+
+	%%% Occurence
+	CAP_Occ(j) = NCAP_Frames(j)./NTOT_Frames;
+end
+%%%% Similarity
+Sim = SpatCorr./sum(SpatCorr);
+for k = 1:Liu_NCap
+	V.fname = [Dir filesep 'CAP_' num2str(k) '_' State '_' num2str(thr) 'Percent.nii'];
+	V.dt=[16,0];
+	S_CAP{k} = reshape( CAP{k},V.dim);
+	Image = spm_write_vol(V,S_CAP{k});     
+end
+V.fname = [Dir filesep 'MeanAct_' State '_' num2str(thr) 'Percent.nii'];
+V.dt=[16,0];
+ActiMap1 = reshape( ActiMap1,V.dim);
+Image = spm_write_vol(V, ActiMap1);
+Cap_par.Similarity = Sim ;
+Cap_par.occurence = CAP_Occ;
+Cap_par.ClusterInd = CAP_Ind;
+save([Dir filesep 'Cap_par_' State '_' num2str(thr) '.mat'],'Cap_par');
+save([Dir filesep 'CAP_' State '_' num2str(thr) '.mat'],'S_CAP');
 
 return;
      

@@ -1,4 +1,4 @@
-function [Params] = Comp_Params(TS,Data,CMap,brind,iseed) 
+function Params = Comp_Params_single(TS,Data,CMap,brind) 
 
 % This function computes the params needed for the CAP computation.
 %  
@@ -44,41 +44,31 @@ function [Params] = Comp_Params(TS,Data,CMap,brind,iseed)
 % For a copy of the GNU General Public License, see <http://www.gnu.org/licenses/>.
 %__________________________________________________________________________
 
-Params ={};
-
-for i=1:length(Data)
-    fprintf('\n Processing subject %d \n',i);  
-    CorrMap = CMap{i,iseed}; 
-    New_data = Data{i};
-    New_data(isnan(New_data))=0;
-    Tseries = TS{i,iseed};
-    TotN = max(size(Tseries));
-    [M indM] = max(Tseries);
-    [m indm] = min(Tseries);
-    Start = M;
-    Step = (M-m)/50; 
-    count = 1;
-    fprintf('\n Threshold up %d \n',i);  
-    for thr = Start:-Step:m
-        fprintf('.');
-        index1 = find(Tseries >= thr);
-        IndStruct{i,count} = index1; 
-        ActiMap1 =zeros(1,size(New_data,2));
-        tmp = mean(New_data(index1,:),1); %% something like 1 x nvoxels
-        ActiMap1(brind) = tmp(brind);
-        rate1(i,count) = (1-(length(index1)/TotN))*100;
-        SpatCorr1(i,count) = corr(CorrMap',ActiMap1'); %%% needs transpose for this kind of arrays
-        count = count+1;
-    end
+CorrMap = CMap{1}; 
+New_data = Data{1};
+New_data(isnan(New_data))=0;
+Tseries = TS{1};
+TotN = max(size(Tseries));
+M = max(Tseries);
+m = min(Tseries);
+Start = M;
+Step = (M-m)/50;
+count = 1;
+for thr = Start:-Step:m
+    fprintf('.');
+    index1 = find(Tseries >= thr);
+    IndStruct{1,count} = index1; 
+    ActiMap1 = zeros(1,size(New_data,2));
+    tmp = mean(New_data(index1,:),1); %% something like 1 x nvoxels
+    ActiMap1(brind) = tmp(brind);
+    rate1(1,count) = (1-(length(index1)/TotN))*100;
+    SpatCorr1(1,count) = corr(CorrMap',ActiMap1'); %%% needs transpose for this kind of arrays
+    count = count+1;
 end
+fprintf('\n');
 
 Params.Ind1 = IndStruct;
 Params.Rate1 = rate1;
 Params.SpatCorr1 = SpatCorr1;
-SpatCorr1M = mean(SpatCorr1,1);
-rate1M = mean(rate1,1);
-figure;
-plot(rate1M,SpatCorr1M);
-set(gca,'xdir','reverse');
 
 return;

@@ -1,4 +1,4 @@
-function CMap = Comp_CMap(data,V,brind,seed_mni,seed_name,seed_radius)  
+function [CMap, TS] = Comp_CMap_single(data,V,brind,seed_mni,seed_radius)  
 
 % This function calculates seed-voxel correlation maps from your data
 %  
@@ -46,31 +46,22 @@ function CMap = Comp_CMap(data,V,brind,seed_mni,seed_name,seed_radius)
 % For a copy of the GNU General Public License, see <http://www.gnu.org/licenses/>.
 %__________________________________________________________________________
 
-num_seed=size(seed_mni,1);
-CMap=cell(length(data),num_seed);
+Y = data{1};
+fprintf('\n Number of NaN in the data %d \n',length(find(isnan(Y(:,brind)))));
 
-for i=1:length(data)
-    
-    fprintf('\n Processing Subj %d \n',i);
-    Y = data{i}(:,brind);
-    fprintf('\n Number of NaN in the data %d \n',length(find(isnan(Y))));
-    
-    for iseed=1:num_seed
+CMap = cell(1);
+TS = cell(1);
         
-        [seed_cor] = Comp_Ball2Mask(V(1).dim,abs(diag(V(1).mat(1:3,1:3)))',seed_mni(iseed,:), seed_radius, V(1));
-        fprintf('\n Seed %s \n',seed_name{iseed});
-        seed_ind = sub2ind(V(1).dim, seed_cor(:,1), seed_cor(:,2), seed_cor(:,3));
-        X = mean(data{i}(:,seed_ind),2);
-        fprintf('\n Number of NaN in the seed %d \n',length(find(isnan(X)))); 
-        dat = zeros(V(1).dim);
-        tmp = Comp_fastCorr(X, Y); 
-        dat(brind) = tmp;
-        fprintf('\n Number of NaN in the CMap image %d \n',length(find(isnan(dat))));
-        dat(isnan(dat)) = 0;
-        CMap{i,iseed} = dat(:)';
-    
-    end
-    
-end
+seed_cor = Comp_Ball2Mask(V(1).dim,abs(diag(V(1).mat(1:3,1:3)))', seed_mni, seed_radius, V(1));
+seed_ind = sub2ind(V(1).dim, seed_cor(:,1), seed_cor(:,2), seed_cor(:,3));
+TS{1} = mean(Y(:,seed_ind),2);
+
+fprintf('\n Number of NaN in the seed %d \n',length(find(isnan(TS{1})))); 
+dat = zeros(V(1).dim);
+tmp = Comp_fastCorr(TS{1}, Y(:,brind)); 
+dat(brind) = tmp;
+fprintf('\n Number of NaN in the CMap image %d \n',length(find(isnan(dat))));
+dat(isnan(dat)) = 0;
+CMap{1} = dat(:)';
 
 return;
