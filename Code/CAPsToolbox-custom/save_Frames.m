@@ -24,7 +24,6 @@ files = dir([workdir filesep pop]);
 files = files(~ismember({files.name},{'.','..'}));
 
 len = length(files);
-num_seed = size(seed_mni,1);
 
 [brind, V]  = Comp_Brind(workdir,'population',pop);
 
