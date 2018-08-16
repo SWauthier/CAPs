@@ -57,7 +57,7 @@ count = 1;
 for thr = Start:-Step:m
     fprintf('.');
     index1 = find(Tseries >= thr);
-    IndStruct{1,count} = index1; 
+    IndStruct{1,count} = index1;
     ActiMap1 = zeros(1,size(New_data,2));
     tmp = mean(New_data(index1,:),1); %% something like 1 x nvoxels
     ActiMap1(brind) = tmp(brind);

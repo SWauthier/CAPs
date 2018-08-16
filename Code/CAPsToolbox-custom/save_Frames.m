@@ -26,6 +26,7 @@ files = files(~ismember({files.name},{'.','..'}));
 len = length(files);
 
 [brind, V]  = Comp_Brind(workdir,'population',pop);
+save(['extras_' pop '.mat'],'brind','V');
 
 for i = 1:len
     fprintf('\n Processing Subj %d \n',i);
@@ -53,5 +54,8 @@ for i = 1:len
     m.TotFrames(x:xend,1:yend) = Frames;
     x = xend + 1;
 end
+
+load handel
+sound(y,Fs)
 
 return

@@ -54,7 +54,8 @@ TS = cell(1);
         
 seed_cor = Comp_Ball2Mask(V(1).dim,abs(diag(V(1).mat(1:3,1:3)))', seed_mni, seed_radius, V(1));
 seed_ind = sub2ind(V(1).dim, seed_cor(:,1), seed_cor(:,2), seed_cor(:,3));
-TS{1} = mean(Y(:,seed_ind),2);
+[~,idxs] = intersect(seed_ind,brind);
+TS{1} = mean(Y(:,seed_ind(idxs)),2);
 
 fprintf('\n Number of NaN in the seed %d \n',length(find(isnan(TS{1})))); 
 dat = zeros(V(1).dim);
