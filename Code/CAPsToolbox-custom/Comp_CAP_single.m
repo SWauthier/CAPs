@@ -74,7 +74,7 @@ C = Centroid;
 Liu_NCap = size(C,1);
 fprintf('\n Number of CAP %d \n',Liu_NCap);
 D = zeros(size(C,1),size(Frames,1));
-for cen = 1:size(C,1)
+for cen = 1:Liu_NCap
 	for f = 1:size(Frames,1)  
         X = [C(cen,brind); Frames(f,brind)];  
         D(cen,f) = pdist(X,'correlation');

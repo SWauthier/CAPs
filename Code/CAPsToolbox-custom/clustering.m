@@ -1,9 +1,10 @@
-function clustering(population, Centroid)
+function clustering(population,reference)
 
 workdir = pwd;
 TH = 15;
 load(fullfile(workdir,['TotFrames_' population '.mat']));
 load(fullfile(workdir,['extras_' population '.mat']));
+load(fullfile(workdir,['Centroid_Liu_' reference '.mat']));
 
 Dir = workdir;State = population;
 
