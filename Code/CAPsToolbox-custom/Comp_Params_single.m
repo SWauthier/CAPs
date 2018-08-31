@@ -3,7 +3,7 @@ function Params = Comp_Params_single(TS,Data,CMap,brind)
 % This function computes the params needed for the CAP computation.
 %  
 % usage:
-% [Params] = Comp_Params(TS,Data,CMap,brind,iseed)
+% [Params] = Comp_Params_single(TS,Data,CMap,brind)
 %
 % Input:
 % TS - cell array (number of subjects,number of seeds). Each cell contain the seed Time 
@@ -15,8 +15,6 @@ function Params = Comp_Params_single(TS,Data,CMap,brind)
 % voxels.It can be saved into an .img/.nii file using the spm_write 
 % function (see spm_write help for info). 
 % brind - brain mask, organized as 1xM, with M=number of brain voxels.
-% iseed - seed index: it specifies which seed to consider (if there is just
-% one seed, then iseed=1).
 %
 % Output: 
 % Params= Struct array of parameters needed for CAPs computation.
@@ -25,7 +23,7 @@ function Params = Comp_Params_single(TS,Data,CMap,brind)
 % Co-Activation Patterns: A Resting State fMRI Study in Propofol-Induced 
 % Loss of Consciousness." PloS one 9.6 (2014): e100012.
 % 
-% Written by EA Sep 2014. 
+% Written by EA Sep 2014. (Edited by SW Aug 2018).
 %__________________________________________________________________________
 % License
 %

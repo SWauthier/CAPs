@@ -5,13 +5,10 @@ function [Cap_par, S_CAP] = Comp_CAP_single(Frames,brind,V,TH,State,Centroid,Dir
 % .mat file under the label defined by State input and the folder by Dir input.
 %  
 % usage:
-% [Cap_par S_CAP] = Comp_CAP(Data,Params,brind,V,State,TH,Centroid,Dir)   
+% [Cap_par S_CAP] = Comp_CAP_single(Frames,brind,V,TH,State,Centroid,Dir)   
 %
 % Input:
-% Data - cell array (number of subjects,number of seeds). Each cell contains the seed Time 
-% course Mx1 array with M=number of time points (e.g fMRI volumes).
-% Params - Struct array of parameters computed using the Comp_Params
-% function
+% Frames - (n x a) array of n time frames.
 % brind - brain mask, organized as 1xM, with M=number of brain voxels.
 % V - spm vector of structures containing image volume information. Needed 
 % as reference for the voxel to world transformation (see spm_vol for info)
@@ -35,7 +32,7 @@ function [Cap_par, S_CAP] = Comp_CAP_single(Frames,brind,V,TH,State,Centroid,Dir
 % Co-Activation Patterns: A Resting State fMRI Study in Propofol-Induced 
 % Loss of Consciousness." PloS one 9.6 (2014): e100012.
 % 
-% Written by EA Sep 2014.
+% Written by EA Sep 2014. (Edited by SW Aug 2018).
 %__________________________________________________________________________
 % License
 %

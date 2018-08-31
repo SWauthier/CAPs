@@ -1,5 +1,7 @@
 function [brind, V] = Comp_Brind(workpath, varargin)
 
+% Computes brain index from all subjects
+
 workdir = workpath;
 
 fprintf(['Parsing \n']);

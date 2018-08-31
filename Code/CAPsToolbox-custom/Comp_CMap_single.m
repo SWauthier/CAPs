@@ -3,7 +3,7 @@ function [CMap, TS] = Comp_CMap_single(data,V,brind,seed_mni,seed_radius)
 % This function calculates seed-voxel correlation maps from your data
 %  
 % usage:
-% CorrMap = Comp_CMap(data,V,brind,seed_mni,seed_name,seed_radius);
+% [CMap, TS] = Comp_CMap_single(data,V,brind,seed_mni,seed_radius)
 %
 % Input:
 % data - cell array (1,number of subjects). Each cell should contain an 

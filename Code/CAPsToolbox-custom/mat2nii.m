@@ -1,3 +1,5 @@
+% Convert .mat to .nii
+
 pop = 'Controls';
 
 load(['extras_' pop '.mat'],'V');

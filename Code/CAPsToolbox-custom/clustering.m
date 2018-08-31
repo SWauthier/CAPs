@@ -1,5 +1,7 @@
 function clustering(population,reference)
 
+% Clustering with respect to a reference set of centroids.
+
 workdir = pwd;
 TH = 15;
 load(fullfile(workdir,['TotFrames_' population '.mat']));

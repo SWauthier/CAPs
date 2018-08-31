@@ -3,18 +3,14 @@ function New_Centroid = Comp_Centroid_single(Frames,brind,V,flag)
 % This function creates CAP centroid from an independent dataset
 %  
 % usage:
-% [Params] = Comp_Params(TS,Data,CMap,brind,iseed)
+% [Centroid] = Comp_Centroid_single(Frames,brind,V,flag)
 %
 % Input:
-% Data - cell array (number of subjects,number of seeds). Each cell contains the seed Time 
-% course Mx1 array with M=number of time points (e.g fMRI volumes).
-% Params - Struct array of parameters computed using the Comp_Params
-% function
+% Frames - (n x a) array of n time frames.
 % brind - brain mask, organized as 1xM, with M=number of brain voxels.
 % V - spm vector of structures containing image volume information. Needed 
-% as reference for the voxel to world transformation (see spm_vol for info)
-% TH - the threshold for the time frames collection (e.g. in the paper, 1SD
-% is ~= 15%, so in that case TH=15). It can be a single number. 
+% as reference for the voxel to world transformation (see spm_vol for
+% info).
 % flag - if 1, it will mask the time frames as in (Liu et al., PNAS 2013)
 %
 % Output: 
@@ -26,7 +22,7 @@ function New_Centroid = Comp_Centroid_single(Frames,brind,V,flag)
 % Co-Activation Patterns: A Resting State fMRI Study in Propofol-Induced 
 % Loss of Consciousness." PloS one 9.6 (2014): e100012.
 % 
-% Written by EA Sep 2014. 
+% Written by EA Sep 2014. (Edited by SW Aug 2018).
 %__________________________________________________________________________
 % License
 %

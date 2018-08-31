@@ -1,5 +1,5 @@
 function [Data, brind, V] = read_nii(workpath, number, varargin)
-% This function reads in all the data. 
+% This function reads in the specified data. 
 %
 % Format:
 % [Data, brind, V] = read_all_nii(workpath,'length',len,'population',pop)

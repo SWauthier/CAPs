@@ -1,5 +1,7 @@
 function CAP_Frames = CAP_Frames(population,CAP_number)
 
+% Saves frames 
+
 CAP_Num = CAP_number;
 pop = population;
 
