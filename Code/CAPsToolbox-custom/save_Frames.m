@@ -15,7 +15,7 @@ function m = save_Frames(population)
 
 pop = population;
 
-seed_mni=[0 53 26]; %PCC
+seed_mni=[0 53 26]; %MFG
 seed_radius=6;
 TH=15; %~1SD
 
@@ -31,7 +31,7 @@ save(['extras_' pop '.mat'],'brind','V');
 for i = 1:len
     fprintf('\n Processing Subj %d \n',i);
     
-    Data = read_nii(workdir, i);
+    Data = read_nii(workdir, i, 'population', pop);
 
     [CMap, TS] = Comp_CMap_single(Data,V,brind,seed_mni,seed_radius);
     
